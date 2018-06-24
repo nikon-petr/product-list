@@ -38,6 +38,10 @@ export default class ProductService {
         }
     }
 
+    getProductById (id) {
+        return this.products.find(product => product.id === id);
+    }
+
     getProductComparator (field, order) {
         return function(a, b) {
             if (!a.hasOwnProperty(field) || !b.hasOwnProperty(field)) {

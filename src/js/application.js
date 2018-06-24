@@ -2,12 +2,14 @@ import $ from 'jquery'
 import ProductTable from './element/productTable'
 import ProductFilter from './element/productFilter'
 import ProductService from "./service/productService";
+import ProductModalDelete from "./element/productModalDelete";
 
 export default class Application {
     constructor (data) {
         this.productService = new ProductService(data, this.onUpdateHandler.bind(this));
-        this.productTable = new ProductTable(this.onSortingChange.bind(this));
+        this.productTable = new ProductTable(this.onSortingChange.bind(this), this.onDeleteHandler.bind(this));
         this.productFilter = new ProductFilter(this.onFilterHandler.bind(this));
+        this.productModalDelete = new ProductModalDelete(this.onConfirmDeleteHandler.bind(this))
     }
 
     init () {
@@ -17,10 +19,15 @@ export default class Application {
             ${this.productTable.draw()} 
         `);
 
+        $('#product-modal-section').append(`
+            ${this.productModalDelete.draw()}
+        `)
+
         this.update()
 
         this.productTable.bindHandlers();
         this.productFilter.bindHandlers();
+        this.productModalDelete.bindHandlers();
     }
 
     update () {
@@ -41,5 +48,15 @@ export default class Application {
 
     onSortingChange () {
         this.update()
+    }
+
+    onDeleteHandler (id) {
+        let product = this.productService.getProductById(id);
+        this.productModalDelete.show(product)
+    }
+
+    onConfirmDeleteHandler (id) {
+        this.productService.removeProduct(id);
+        this.update();
     }
 }

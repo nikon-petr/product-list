@@ -2,11 +2,12 @@ import Abstract from "./abstract";
 import $ from "jquery";
 
 export default class ProductTable extends Abstract {
-    constructor (onSortingChange) {
+    constructor (onSortingChange, onDelete) {
         super();
         this.sortingField = 'none';
         this.sortingOrder = 'asc';
         this.onSortingChange = onSortingChange;
+        this.onDelete = onDelete
     }
 
     draw() {
@@ -84,10 +85,16 @@ export default class ProductTable extends Abstract {
         } else {
             $("#products-table > tbody").empty().append(`
                 <tr scope="row">
-                    <td colspan="4">No matches</td>
+                    <td colspan="4">No data</td>
                 </tr>
             `)
         }
+
+        products.forEach(product => {
+            $(`#delete-button-${product.id}`).bind('click', () => {
+                this.onDelete(product.id)
+            })
+        })
     }
 
     toggleSorting (sortingField) {
