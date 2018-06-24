@@ -1,3 +1,7 @@
+table {
+  table-layout: fixed;
+}
+
 th, td {
   @extend .align-middle;
   @extend .text-center;

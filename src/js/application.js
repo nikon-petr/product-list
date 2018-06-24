@@ -12,7 +12,7 @@ export default class Application {
 
     init () {
         $('#product-section').append(`
-            <h1 class="mb-5">Products</h1>
+            <div class="row"><h1 class="mb-5">Products</h1></div>
             ${this.productFilter.draw()}
             ${this.productTable.draw()} 
         `);

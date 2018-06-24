@@ -12,10 +12,16 @@ export default class ProductTable extends Abstract {
     draw() {
         return `
             <div class="row">
-                <table id="products-table" class="table table-bordered">
+                <table id="products-table" class="table table-bordered" rules="groups">
+                    <colgroup>
+                        <col span="1" width="35%">
+                        <col span="1" width="15%">
+                    </colgroup>
+                    <col span="1" width="25%">
+                    <col span="1" width="25%">
                     <thead>
                     <tr>
-                        <th scope="col" colspan="2">
+                        <th scope="colgroup" colspan="2">
                             Name <div class="sorting-container"><div class="sorting-wrapper"><button 
                                     id="name-sorting-button" 
                                     type="button"
@@ -51,16 +57,16 @@ export default class ProductTable extends Abstract {
             $("#products-table > tbody").empty().append(`
                 ${products.map(product => `
                     <tr scope="row">
-                        <td width="35%" class="text-left border-right-0">${product.name}</td>
-                        <td width="15%" class="text-right border-left-0 ">
+                        <td class="text-left border-right-0"><a href="" class="btn btn-sm btn-link">${product.name}</a></td>
+                        <td class="text-right border-left-0">
                             <span class="badge badge-pill badge-secondary">${product.count}</span>
                         </td>
-                        <td width="25%">${new Intl.NumberFormat('en', {
+                        <td>${new Intl.NumberFormat('en', {
                             style: 'currency',
                             currency: 'USD'
                             }).format(product.price)}
                         </td>
-                        <td width="25%">
+                        <td>
                             <button
                                 id="edit-button-${product.id}"
                                 type="button"
@@ -78,7 +84,7 @@ export default class ProductTable extends Abstract {
         } else {
             $("#products-table > tbody").empty().append(`
                 <tr scope="row">
-                    <td width="35%" colspan="4">No matches</td>
+                    <td colspan="4">No matches</td>
                 </tr>
             `)
         }
