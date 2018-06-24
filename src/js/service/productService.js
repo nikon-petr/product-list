@@ -31,8 +31,11 @@ export default class ProductService {
             let regExp = new RegExp(filterString, 'i');
             filteredProducts = this.products.filter(product => regExp.test(product.name));
         }
-        filteredProducts.sort(this.getProductComparator(sortingField, sortingOrder))
-        return filteredProducts;
+        if (sortingField === 'none') {
+            return filteredProducts;
+        } else {
+            return filteredProducts.concat().sort(this.getProductComparator(sortingField, sortingOrder));
+        }
     }
 
     getProductComparator (field, order) {
@@ -42,9 +45,13 @@ export default class ProductService {
             }
 
             const varA = (typeof a[field] === 'string') ?
-                a[field].toUpperCase() : a[field];
+                a[field].toLowerCase() : a[field];
             const varB = (typeof b[field] === 'string') ?
-                b[field].toUpperCase() : b[field];
+                b[field].toLowerCase() : b[field];
+
+            if (typeof varA === 'number' && typeof varB === 'number') {
+                return order === 'desc' ? (varA - varB) * -1 : varA - varB;
+            }
 
             let comparison = 0;
             if (varA > varB) {
@@ -52,7 +59,8 @@ export default class ProductService {
             } else if (varA < varB) {
                 comparison = -1;
             }
-            return order === 'desc' ? comparison * -1 : comparison
+
+            return order === 'desc' ? comparison * -1 : comparison;
         }
     }
 }

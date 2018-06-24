@@ -1,0 +1,12 @@
+i {
+  @extend .align-middle
+}
+
+i.icon-primary {
+  color: $primary;
+}
+
+i.icon-danger {
+  color: $danger;
+}
+

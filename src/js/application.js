@@ -6,7 +6,7 @@ import ProductService from "./service/productService";
 export default class Application {
     constructor (data) {
         this.productService = new ProductService(data, this.onUpdateHandler.bind(this));
-        this.productTable = new ProductTable();
+        this.productTable = new ProductTable(this.onSortingChange.bind(this));
         this.productFilter = new ProductFilter(this.onFilterHandler.bind(this));
     }
 
@@ -17,17 +17,13 @@ export default class Application {
             ${this.productTable.draw()} 
         `);
 
-        let result = this.productService.getProducts(
-            this.productFilter.trimFilterString(),
-            this.productTable.sortingField,
-            this.productTable.sortingOrder);
-        this.productTable.update(result);
+        this.update()
 
         this.productTable.bindHandlers();
         this.productFilter.bindHandlers();
     }
 
-    onFilterHandler () {
+    update () {
         let result = this.productService.getProducts(
             this.productFilter.trimFilterString(),
             this.productTable.sortingField,
@@ -35,11 +31,15 @@ export default class Application {
         this.productTable.update(result);
     }
 
+    onFilterHandler () {
+        this.update()
+    }
+
     onUpdateHandler () {
-        let result = this.productService.getProducts(
-            this.productFilter.trimFilterString(),
-            this.productTable.sortingField,
-            this.productTable.sortingOrder);
-        this.productTable.update(result);
+        this.update()
+    }
+
+    onSortingChange () {
+        this.update()
     }
 }

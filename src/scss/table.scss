@@ -1,0 +1,21 @@
+th, td {
+  @extend .align-middle;
+  @extend .text-center;
+  position: relative;
+}
+
+.sorting-container {
+  position: absolute;
+  right: $spacer * 0.75;
+  top: 0;
+  bottom: 0;
+  margin-top: auto;
+  margin-bottom: auto;
+  display: table;
+  vertical-align: middle;
+}
+
+.sorting-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
