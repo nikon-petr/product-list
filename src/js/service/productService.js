@@ -14,9 +14,8 @@ export default class ProductService {
         this.onUpdate()
     }
 
-    update (id, updateProduct) {
-        let productIndex = this.products.findIndex(product => product.id === id)
-        this.products[productIndex].id = updateProduct.id;
+    update (updateProduct) {
+        let productIndex = this.products.findIndex(product => product.id === updateProduct.id)
         this.products[productIndex].name = updateProduct.name;
         this.products[productIndex].count = updateProduct.count;
         this.products[productIndex].price = updateProduct.price;

@@ -15,11 +15,11 @@ export default class ProductTable extends Abstract {
             <div class="row">
                 <table id="products-table" class="table table-bordered" rules="groups">
                     <colgroup>
-                        <col span="1" width="35%">
                         <col span="1" width="15%">
+                        <col span="1" width="35%">
                     </colgroup>
-                    <col span="1" width="25%">
-                    <col span="1" width="25%">
+                    <col span="1" width="35%">
+                    <col span="1" width="15%">
                     <thead>
                     <tr>
                         <th scope="colgroup" colspan="2">
@@ -69,9 +69,12 @@ export default class ProductTable extends Abstract {
                         </td>
                         <td>
                             <button
-                                id="edit-button-${product.id}"
                                 type="button"
                                 class="btn btn-sm btn-light" 
+                                data-target="#modal-update-element"
+                                data-toggle="modal"
+                                data-product='${JSON.stringify(product)}'
+                                data-action="update"
                             ><i class="icon-primary material-icons">edit</i></button>
                             <button
                                 id="delete-button-${product.id}"

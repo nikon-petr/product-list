@@ -3,13 +3,15 @@ import ProductTable from './element/productTable'
 import ProductFilter from './element/productFilter'
 import ProductService from "./service/productService";
 import ProductModalDelete from "./element/productModalDelete";
+import ProductModalUpdate from "./element/productModalUpdate";
 
 export default class Application {
     constructor (data) {
-        this.productService = new ProductService(data, this.onUpdateHandler.bind(this));
+        this.productService = new ProductService(data, this.onUpdateServiceHandler.bind(this));
         this.productTable = new ProductTable(this.onSortingChange.bind(this), this.onDeleteHandler.bind(this));
         this.productFilter = new ProductFilter(this.onFilterHandler.bind(this));
-        this.productModalDelete = new ProductModalDelete(this.onConfirmDeleteHandler.bind(this))
+        this.productModalDelete = new ProductModalDelete(this.onConfirmDeleteHandler.bind(this));
+        this.productModalUpdate = new ProductModalUpdate(this.onUpdateHandler.bind(this));
     }
 
     init () {
@@ -21,6 +23,7 @@ export default class Application {
 
         $('#product-modal-section').append(`
             ${this.productModalDelete.draw()}
+            ${this.productModalUpdate.draw()}
         `)
 
         this.update()
@@ -28,6 +31,7 @@ export default class Application {
         this.productTable.bindHandlers();
         this.productFilter.bindHandlers();
         this.productModalDelete.bindHandlers();
+        this.productModalUpdate.bindHandlers();
     }
 
     update () {
@@ -42,7 +46,7 @@ export default class Application {
         this.update()
     }
 
-    onUpdateHandler () {
+    onUpdateServiceHandler () {
         this.update()
     }
 
@@ -58,5 +62,9 @@ export default class Application {
     onConfirmDeleteHandler (id) {
         this.productService.removeProduct(id);
         this.update();
+    }
+
+    onUpdateHandler (product) {
+        this.productService.update(product)
     }
 }
