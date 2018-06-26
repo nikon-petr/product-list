@@ -105,10 +105,10 @@ export default class ProductModalAddNewUpdate extends Abstract{
         $('#product-name-update')
             .bind('input', e => {
                 this.product.name = $(e.target).val();
-                this.isNameValid(true)
+                this.validateName(true)
             })
             .bind('blur', e => {
-                this.isNameValid()
+                this.validateName()
             })
     }
 
@@ -116,7 +116,7 @@ export default class ProductModalAddNewUpdate extends Abstract{
         $('#product-count-update')
             .bind('input', e => {
                 this.product.count = $(e.target).val();
-                this.isCountValid(true)
+                this.validateCount(true)
             })
             .bind('paste', e => {
                 e.preventDefault();
@@ -126,7 +126,7 @@ export default class ProductModalAddNewUpdate extends Abstract{
                     .replace(/\D/g,''));
             })
             .bind('blur', e => {
-                if(this.isCountValid()) {
+                if(this.validateCount()) {
                     $(e.target).val(parseInt(this.product.count));
                 } else {
                     $(e.target).val(this.product.count.toString());
@@ -141,10 +141,10 @@ export default class ProductModalAddNewUpdate extends Abstract{
             })
             .bind('input', e => {
                 this.product.price = $(e.target).val();
-                this.isPriceValid(true)
+                this.validatePrice(true)
             })
             .bind('blur', e => {
-                if(this.isPriceValid()) {
+                if(this.validatePrice()) {
                     $(e.target).val(this.priceFormatter.format(this.product.price));
                 }
             })
@@ -152,7 +152,7 @@ export default class ProductModalAddNewUpdate extends Abstract{
 
     bindSubmitButton () {
         $('#action-confirm').bind('click', e => {
-            if (this.isFormValid()) {
+            if (this.validateForm()) {
                 this.product.count = parseInt(this.product.count);
                 if (this.action === 'update') {
                     this.onUpdate(this.product);
@@ -166,25 +166,25 @@ export default class ProductModalAddNewUpdate extends Abstract{
         })
     }
 
-    isFormValid () {
-        return this.isNameValid() * this.isCountValid() * this.isPriceValid();
+    validateForm () {
+        return this.validateName() * this.validateCount() * this.validatePrice();
     }
 
-    isNameValid (onInputCheck=false) {
+    validateName (onInputCheck=false) {
         const input = $('#product-name-update');
         let message = this.getValidationMessage(this.product.name.toString(), this.nameRules);
         this.updateInputValidationFeedback(input, message, onInputCheck);
         return message === true;
     }
 
-    isCountValid (onInputCheck=false) {
+    validateCount (onInputCheck=false) {
         const input = $('#product-count-update');
         let message = this.getValidationMessage(this.product.count.toString(), this.countRules);
         this.updateInputValidationFeedback(input, message, onInputCheck);
         return message === true;
     }
 
-    isPriceValid (onInputCheck=false) {
+    validatePrice (onInputCheck=false) {
         const input = $('#product-price-update');
         let message = this.getValidationMessage(this.product.price.toString(), this.priceRules);
         this.updateInputValidationFeedback(input, message, onInputCheck);
