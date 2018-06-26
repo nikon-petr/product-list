@@ -4,8 +4,9 @@ export default class ProductService {
         this.onUpdate = onUpdate
     }
 
-    addProduct (product) {
-        this.products.append(product)
+    addNewProduct (product) {
+        product.id = this.products.reduce((e, l) => e.id > l.id ? e : l).id + 1;
+        this.products.push(product);
         this.onUpdate()
     }
 
@@ -14,7 +15,7 @@ export default class ProductService {
         this.onUpdate()
     }
 
-    update (updateProduct) {
+    updateProduct (updateProduct) {
         let productIndex = this.products.findIndex(product => product.id === updateProduct.id)
         this.products[productIndex].name = updateProduct.name;
         this.products[productIndex].count = updateProduct.count;

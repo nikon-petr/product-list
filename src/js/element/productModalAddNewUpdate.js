@@ -1,10 +1,11 @@
 import $ from 'jquery'
 import Abstract from "./abstract";
 
-export default class ProductModalUpdate extends Abstract{
-    constructor (onUpdate) {
+export default class ProductModalAddNewUpdate extends Abstract{
+    constructor (onUpdate, onAddNew) {
         super();
         this.onUpdate = onUpdate;
+        this.onAddNew = onAddNew;
         this.product = undefined;
         this.priceFormatter = new Intl.NumberFormat('en', {style: 'currency', currency: 'USD'});
         this.action = undefined;
@@ -12,12 +13,13 @@ export default class ProductModalUpdate extends Abstract{
         this.isInvalidNameLength = v => v.length > 15;
         this.isInvalidName = v => /^\s+$/.test(v);
         this.isInvalidCount = v => !/^\d+$/.test(v);
+        this.isInvalidSignPrice = v => /^-\d*(\.\d+)?$/.test(v)
         this.isInvalidPrice = v => !/^\d*(\.\d+)?$/.test(v);
     }
 
     draw () {
         return `
-            <div id="modal-update-element" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+            <div id="modal-addnew-update" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
               <div class="modal-dialog modal-dialog-centered " role="document">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -26,23 +28,24 @@ export default class ProductModalUpdate extends Abstract{
                   <div class="modal-body">
                     <form>
                       <div class="form-group">
-                        <label for="product-name-update" class="col-form-label">Name</label>
-                        <input type="text" class="form-control" id="product-name-update" autocomplete=off>
+                        <label for="product-name-update" class="col-form-label"><bold>Name</bold></label>
+                        <input type="text" class="form-control" id="product-name-update" placeholder="Enter name" autocomplete=off>
                         <div class="invalid-feedback"></div>
                       </div>
                       <div class="form-group">
-                        <label for="product-count-update" class="col-form-label">Count</label>
+                        <label for="product-count-update" class="col-form-label"><bold>Count</bold></label>
                         <input 
                             type="text" 
                             onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                             class="form-control" 
-                            id="product-count-update" 
+                            id="product-count-update"
+                            placeholder="Enter count"
                             autocomplete=off>
                         <div class="invalid-feedback"></div>
                       </div>
                       <div class="form-group">
-                        <label for="product-price-update" class="col-form-label">Price</label>
-                        <input type="text" class="form-control" id="product-price-update" autocomplete=off>
+                        <label for="product-price-update" class="col-form-label"><bold>Price</bold></label>
+                        <input type="text" class="form-control" id="product-price-update" placeholder="Enter price" autocomplete=off>
                         <div class="invalid-feedback"></div>
                       </div>
                     </form>
@@ -66,15 +69,20 @@ export default class ProductModalUpdate extends Abstract{
     }
 
     bindModalElement () {
-        $('#modal-update-element')
+        $('#modal-addnew-update')
             .on('show.bs.modal', e => {
                 const button = $(e.relatedTarget);
-                this.product = button.data('product');
                 this.action = button.data('action');
-                $('#product-name-update').val(this.product.name);
-                $('#product-count-update').val(this.product.count);
-                const formatedPrice = this.priceFormatter.format(this.product.price);
-                $('#product-price-update').val(isNaN(formatedPrice) ? this.product.price : formatedPrice);
+                if (this.action === 'update') {
+                    this.product = button.data('product');
+                    $('#product-name-update').val(this.product.name);
+                    $('#product-count-update').val(this.product.count);
+                    const formattedPrice = this.priceFormatter.format(this.product.price);
+                    $('#product-price-update').val(isNaN(formattedPrice) ? this.product.price : formattedPrice);
+                } else if (this.action === 'add') {
+                    this.product = {name: '', count: '', price: ''};
+                    $(e.target).find('input').val('')
+                }
                 $('#action-confirm').text(this.action.replace(/(^|\s)\S/g, l => l.toUpperCase()))
                 $('#modal-update-label').text(this.action.replace(/(^|\s)\S/g, l => l.toUpperCase()) + ' product')
             })
@@ -136,13 +144,16 @@ export default class ProductModalUpdate extends Abstract{
 
     bindSubmitButton () {
         $('#action-confirm').bind('click', e => {
-            if (this.action === 'update' && this.isFormValid()) {
+            if (this.isFormValid()) {
                 this.product.count = parseInt(this.product.count);
-                this.onUpdate(this.product);
+                if (this.action === 'update') {
+                    this.onUpdate(this.product);
+                } else if (this.action === 'add') {
+                    this.onAddNew(this.product);
+                }
                 this.product = undefined;
                 this.action = undefined;
-                $('#modal-update-element').modal('hide');
-                console.log('yyyyy')
+                $('#modal-addnew-update').modal('hide');
             }
         })
     }
@@ -214,8 +225,10 @@ export default class ProductModalUpdate extends Abstract{
     getValidationMessageForPrice (value) {
         if (this.isEmpty(value)) {
             return 'Price is required'
+        } else if (this.isInvalidSignPrice(value)) {
+            return 'Price must be positive'
         } else if (this.isInvalidPrice(value)) {
-            return 'Price value is invalid'
+            return 'Price must be real'
         } else {
             return null
         }

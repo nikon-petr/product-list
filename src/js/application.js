@@ -3,15 +3,15 @@ import ProductTable from './element/productTable'
 import ProductFilter from './element/productFilter'
 import ProductService from "./service/productService";
 import ProductModalDelete from "./element/productModalDelete";
-import ProductModalUpdate from "./element/productModalUpdate";
+import ProductModalAddNewUpdate from "./element/productModalAddNewUpdate";
 
 export default class Application {
     constructor (data) {
         this.productService = new ProductService(data, this.onUpdateServiceHandler.bind(this));
-        this.productTable = new ProductTable(this.onSortingChange.bind(this), this.onDeleteHandler.bind(this));
+        this.productTable = new ProductTable(this.onSortingChange.bind(this));
         this.productFilter = new ProductFilter(this.onFilterHandler.bind(this));
-        this.productModalDelete = new ProductModalDelete(this.onConfirmDeleteHandler.bind(this));
-        this.productModalUpdate = new ProductModalUpdate(this.onUpdateHandler.bind(this));
+        this.productModalDelete = new ProductModalDelete(this.onDeleteHandler.bind(this));
+        this.productModalAddNewUpdate = new ProductModalAddNewUpdate(this.onUpdateHandler.bind(this), this.onAddNewHandler.bind(this));
     }
 
     init () {
@@ -23,7 +23,7 @@ export default class Application {
 
         $('#product-modal-section').append(`
             ${this.productModalDelete.draw()}
-            ${this.productModalUpdate.draw()}
+            ${this.productModalAddNewUpdate.draw()}
         `)
 
         this.update()
@@ -31,7 +31,7 @@ export default class Application {
         this.productTable.bindHandlers();
         this.productFilter.bindHandlers();
         this.productModalDelete.bindHandlers();
-        this.productModalUpdate.bindHandlers();
+        this.productModalAddNewUpdate.bindHandlers();
     }
 
     update () {
@@ -55,16 +55,14 @@ export default class Application {
     }
 
     onDeleteHandler (id) {
-        let product = this.productService.getProductById(id);
-        this.productModalDelete.show(product)
-    }
-
-    onConfirmDeleteHandler (id) {
         this.productService.removeProduct(id);
-        this.update();
     }
 
     onUpdateHandler (product) {
-        this.productService.update(product)
+        this.productService.updateProduct(product)
+    }
+
+    onAddNewHandler (product) {
+        this.productService.addNewProduct(product)
     }
 }

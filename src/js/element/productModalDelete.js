@@ -5,12 +5,13 @@ export default class ProductModalDelete extends Abstract{
     constructor (onDeleteConfirmed) {
         super();
         this.onDeleteConfirmed = onDeleteConfirmed;
+        this.product = undefined;
     }
 
 
     draw () {
         return `
-            <div id="modal-delete-element" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+            <div id="modal-delete" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
               <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -34,22 +35,17 @@ export default class ProductModalDelete extends Abstract{
         this.bindModalElement();
     }
 
-    show (product) {
-        $('#modal-delete-element').data('product', product).after().modal('show')
-    }
-
     bindModalElement () {
-        $('#modal-delete-element').on('show.bs.modal', function () {
-            $(this).find('.modal-body > p').empty().append(`Are you sure you want to delete <strong>${$(this).data('product').name}</strong> product?`)
+        $('#modal-delete').on('show.bs.modal',  e => {
+            this.product = $(e.relatedTarget).data('product')
+            $(e.target).find('.modal-body > p').empty().append(`Are you sure you want to delete <strong>${this.product.name}</strong> product?`)
         })
     }
 
     bindModalDeleteButton () {
         $('#modal-delete-button').bind('click', () => {
-            let $modal = $('#modal-delete-element')
-            let product = $modal.data('product');
-            $modal.removeData('product').modal('hide');
-            this.onDeleteConfirmed(product.id)
+            $('#modal-delete').modal('hide');
+            this.onDeleteConfirmed(this.product.id)
         })
     }
 }

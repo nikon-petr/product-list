@@ -71,15 +71,17 @@ export default class ProductTable extends Abstract {
                             <button
                                 type="button"
                                 class="btn btn-sm btn-light" 
-                                data-target="#modal-update-element"
+                                data-target="#modal-addnew-update"
                                 data-toggle="modal"
                                 data-product='${JSON.stringify(product)}'
                                 data-action="update"
                             ><i class="icon-primary material-icons">edit</i></button>
                             <button
-                                id="delete-button-${product.id}"
                                 type="button"
                                 class="btn btn-sm btn-light" 
+                                data-target="#modal-delete"
+                                data-toggle="modal"
+                                data-product='${JSON.stringify(product)}'
                             ><i class="material-icons icon-danger">delete</i></button>
                         </td>
                     </tr>
@@ -92,12 +94,6 @@ export default class ProductTable extends Abstract {
                 </tr>
             `)
         }
-
-        products.forEach(product => {
-            $(`#delete-button-${product.id}`).bind('click', () => {
-                this.onDelete(product.id)
-            })
-        })
     }
 
     toggleSorting (sortingField) {

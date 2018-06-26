@@ -11,7 +11,7 @@ export default class ProductFilter extends Abstract{
     draw() {
         return `
             <div class="row">
-                <div class="col-6 px-0 mb-2 input-group">
+                <div class="input-group col-6 px-0 mb-2 ">
                       <input 
                             id="filter-input"
                             type="search" 
@@ -24,6 +24,16 @@ export default class ProductFilter extends Abstract{
                                 class="btn btn-secondary" 
                             >Search</button>
                       </div>
+                </div>
+                <div class="text-right col-6 px-0 mb-2">
+                    <button 
+                        id="add-button"
+                        type="button"
+                        data-target="#modal-addnew-update"
+                        data-toggle="modal"
+                        data-action="add"
+                        class="btn btn-outline-success" 
+                    >Add New</button>
                 </div>
             </div>
         `
