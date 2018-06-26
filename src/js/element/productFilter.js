@@ -21,7 +21,7 @@ export default class ProductFilter extends Abstract{
                             <button 
                                 id="filter-button"
                                 type="button"
-                                class="btn btn-secondary" 
+                                class="btn btn-primary" 
                             >Search</button>
                       </div>
                 </div>

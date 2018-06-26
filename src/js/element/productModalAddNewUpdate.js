@@ -9,12 +9,20 @@ export default class ProductModalAddNewUpdate extends Abstract{
         this.product = undefined;
         this.priceFormatter = new Intl.NumberFormat('en', {style: 'currency', currency: 'USD'});
         this.action = undefined;
-        this.isEmpty = v => v.length === 0;
-        this.isInvalidNameLength = v => v.length > 15;
-        this.isInvalidName = v => /^\s+$/.test(v);
-        this.isInvalidCount = v => !/^\d+$/.test(v);
-        this.isInvalidSignPrice = v => /^-\d*(\.\d+)?$/.test(v)
-        this.isInvalidPrice = v => !/^\d*(\.\d+)?$/.test(v);
+        this.nameRules = [
+            v => !!v || 'Name must not be empty',
+            v => v.length <= 15 || 'Name must contains less than 15 characters',
+            v => !/^\s+$/.test(v) || 'Name must not contains only space characters'
+        ];
+        this.countRules = [
+            v => !!v || 'Count is required',
+            v => /^\d+$/.test(v) || 'Count must be positive integer'
+        ];
+        this.priceRules = [
+            v => !!v || 'Price is required',
+            v => !/^-\d*(\.\d+)?$/.test(v) || 'Price must be positive',
+            v => /^\d*(\.\d+)?$/.test(v) || 'Price must be real'
+        ];
     }
 
     draw () {
@@ -164,27 +172,27 @@ export default class ProductModalAddNewUpdate extends Abstract{
 
     isNameValid (onInputCheck=false) {
         const input = $('#product-name-update');
-        let message = this.getValidationMessageForName(this.product.name.toString());
+        let message = this.getValidationMessage(this.product.name.toString(), this.nameRules);
         this.updateInputValidationFeedback(input, message, onInputCheck);
-        return message == null;
+        return message === true;
     }
 
     isCountValid (onInputCheck=false) {
         const input = $('#product-count-update');
-        let message = this.getValidationMessageForCount(this.product.count.toString());
+        let message = this.getValidationMessage(this.product.count.toString(), this.countRules);
         this.updateInputValidationFeedback(input, message, onInputCheck);
-        return message == null;
+        return message === true;
     }
 
     isPriceValid (onInputCheck=false) {
         const input = $('#product-price-update');
-        let message = this.getValidationMessageForPrice(this.product.price.toString());
+        let message = this.getValidationMessage(this.product.price.toString(), this.priceRules);
         this.updateInputValidationFeedback(input, message, onInputCheck);
-        return message == null;
+        return message === true;
     }
 
     updateInputValidationFeedback (input, message, onInputCheck) {
-        if (message != null) {
+        if (message !== true) {
             if (onInputCheck || input.hasClass('is-invalid')) {
                 input.siblings('.invalid-feedback').text(message);
             } else {
@@ -200,37 +208,13 @@ export default class ProductModalAddNewUpdate extends Abstract{
         }
     }
 
-    getValidationMessageForName (value) {
-        if (this.isEmpty(value)) {
-            return 'Name must not be empty'
-        } else if (this.isInvalidNameLength(value)) {
-            return 'Name must contains less than 15 characters'
-        } else if (this.isInvalidName(value)) {
-            return 'Name must not contains only space characters'
-        } else {
-            return null
+    getValidationMessage (value, rules) {
+        let validationResult;
+        for (let i = 0; i < rules.length; i++) {
+            if ((validationResult = rules[i](value)) !== true) {
+                return validationResult;
+            }
         }
-    }
-
-    getValidationMessageForCount (value) {
-        if (this.isEmpty(value)) {
-            return 'Count is required'
-        } else if (this.isInvalidCount(value)) {
-            return 'Count must be positive integer'
-        } else {
-            return null
-        }
-    }
-
-    getValidationMessageForPrice (value) {
-        if (this.isEmpty(value)) {
-            return 'Price is required'
-        } else if (this.isInvalidSignPrice(value)) {
-            return 'Price must be positive'
-        } else if (this.isInvalidPrice(value)) {
-            return 'Price must be real'
-        } else {
-            return null
-        }
+        return true;
     }
 }
